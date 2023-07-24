@@ -16,7 +16,7 @@ if (isset($_POST['billId'])) {
     // Return the bill data as JSON
     echo json_encode([
       'bill_name' => $bill['bill_name'],
-      'bill_amount' => $bill['bill_amount'],
+      'bill_amount' => $bill['bill_paid_amount'],
       'bill_notes' => $bill['bill_notes'] // Include the bill_notes field in the result set
     ]);
   } else {

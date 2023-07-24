@@ -76,7 +76,7 @@ function payBill(billId, amount) {
       success: function (response) {
         var data = JSON.parse(response);
         $('#bill-name').val(data.bill_name);
-        $('#notes').val(data.bill_notes); // Update the notes field in the payment modal with the retrieved notes
+        $('#bill-notes').val(data.bill_notes); // Update the notes field in the payment modal with the retrieved notes
       },
       error: function () {
         showErrorToast('Error retrieving bill data.');

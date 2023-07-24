@@ -257,9 +257,6 @@ function getBillFromDatabase($billId)
 {
     global $pdo; // Access the database connection object
     // Perform necessary database queries to fetch the bill information
-    // Replace the following example code with your actual implementation
-
-    // Assuming you have a database connection established, you can use a query like this
     $query = "SELECT * FROM history WHERE b_id = :billId";
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':billId', $billId);
@@ -271,4 +268,5 @@ function getBillFromDatabase($billId)
     // Return the bill data
     return $bill;
 }
+
 ?>
