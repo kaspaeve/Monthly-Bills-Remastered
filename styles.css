@@ -1,0 +1,53 @@
+/* Custom color classes */
+.green {
+  color: #008000;
+}
+
+.bg-green {
+  background-color: #008000;
+}
+
+.text-beige {
+  color: #F5F5DC;
+}
+
+.bg-beige {
+  background-color: #F5F5DC;
+}
+
+.text-brown {
+  color: #A52A2A;
+}
+
+.bg-brown {
+  background-color: #A52A2A;
+}
+/* Custom color classes */
+.green {
+  color: #4CAF50; /* Earthly green color */
+}
+
+.transparent-green {
+  color: rgba(76, 175, 80, 0.7); /* Transparent green color */
+  background-color: transparent;
+}
+
+/* Apply the custom colors to specific elements */
+.btn-view {
+  background-color: #4CAF50; /* Earthly green color */
+  border-color: #4CAF50; /* Earthly green color */
+}
+.btn-view:hover {
+  background-color: #388E3C; /* Darker green color on hover */
+  border-color: #388E3C; /* Darker green color on hover */
+}
+
+.btn-pay {
+  color: rgba(76, 175, 80, 0.7); /* Transparent green color */
+  background-color: transparent;
+  border-color: rgba(76, 175, 80, 0.7); /* Transparent green color */
+}
+.custom-dropdown {
+    width: auto;
+    display: inline-block;
+}
