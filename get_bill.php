@@ -14,7 +14,11 @@ if (isset($_POST['billId'])) {
 
   if ($bill) {
     // Return the bill data as JSON
-    echo json_encode($bill);
+    echo json_encode([
+      'bill_name' => $bill['bill_name'],
+      'bill_amount' => $bill['bill_amount'],
+      'bill_notes' => $bill['bill_notes'] // Include the bill_notes field in the result set
+    ]);
   } else {
     // Handle the case when the bill is not found
     echo json_encode(['error' => 'Bill not found']);

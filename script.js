@@ -76,6 +76,7 @@ function payBill(billId, amount) {
       success: function (response) {
         var data = JSON.parse(response);
         $('#bill-name').val(data.bill_name);
+        $('#notes').val(data.bill_notes); // Update the notes field in the payment modal with the retrieved notes
       },
       error: function () {
         showErrorToast('Error retrieving bill data.');
@@ -170,7 +171,7 @@ function fetchBills() {
           '<span class="mr-2">' + sanitizeInput(data[i].bill_paid_amount) + '</span>' +
           '<div class="input-group-append">' +
           '<button type="button" class="btn btn-success pay-btn btn-pay" data-id="' + data[i].b_id + '">Pay</button>' +
-          '</div>' +
+            '</div>' +
           '</div>' +
           '</td>' +
           '<td>' + sanitizeInput(data[i].bill_date) + '</td>' +
