@@ -108,8 +108,6 @@ function getDatabaseStatus()
     }
 }
 
-// Add any other functions you have in function.php
-
 // Sanitize user input to prevent SQL injection attacks
 function sanitizeInput($input)
 {
@@ -123,7 +121,6 @@ function validateInput($input)
 }
 
 // Function to fetch bill data based on month and year
-// Function to fetch bill data based on month and year
 function fetchBills($month, $year)
 {
     global $pdo; // Access the database connection object
@@ -133,7 +130,7 @@ function fetchBills($month, $year)
     $year = filter_var($year, FILTER_VALIDATE_INT);
 
     if ($month === false || $year === false) {
-        return json_encode(array()); // Invalid input, return empty JSON array
+        return array(); // Invalid input, return empty array
     }
 
     try {
@@ -150,9 +147,8 @@ function fetchBills($month, $year)
         // Fetch all rows
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Return the result as JSON
-        echo json_encode($result);
-        exit;
+        // Return the result as an array
+        return $result;
     } catch (PDOException $e) {
         // Handle database error
         die("Error fetching bill data: " . $e->getMessage());
@@ -233,8 +229,6 @@ function updateBillPaidAmount($billId, $paidAmount)
         die("Error updating bill data: " . $e->getMessage());
     }
 }
-
-// Add any other functions you have in function.php
 
 // Save data to the database if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'saveBillData') {

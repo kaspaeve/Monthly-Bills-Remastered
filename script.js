@@ -7,7 +7,6 @@ function sanitizeInput(input) {
   }
 }
 
-
 // Validate user input to prevent SQL injection attacks
 function validateInput(input) {
   return input.match(/^[a-zA-Z0-9\s]+$/);
@@ -22,12 +21,55 @@ function viewBills() {
       type: 'POST',
       url: 'ajax.php',
       data: {
-        action: 'viewBills',
+        action: 'fetchBills',
         month: month,
         year: year
       },
       success: function (response) {
-        $('#billTable').html(response);
+        // Clear the table body
+        $('#bills-table tbody').empty();
+
+        // Check if response is not empty
+        if (response.length > 0) {
+          // Populate the table with the retrieved data
+          for (var i = 0; i < response.length; i++) {
+            var row = '<tr>' +
+              '<td>' + sanitizeInput(response[i].bill_name) + '</td>' +
+              '<td>' +
+              '<div class="d-flex align-items-center">' +
+              '<span class="mr-2">' + sanitizeInput(response[i].bill_paid_amount) + '</span>' +
+              '<div class="input-group-append">' +
+              '<button type="button" class="btn btn-success pay-btn btn-pay" data-id="' + response[i].b_id + '">Pay</button>' +
+              '</div>' +
+              '</div>' +
+              '</td>' +
+              '<td>' + sanitizeInput(response[i].bill_date) + '</td>' +
+              '<td>' + sanitizeInput(response[i].bill_paid_date) + '</td>' +
+              '<td>' + response[i].b_id + '</td>' +
+              '<td>' + sanitizeInput(response[i].bill_notes) + '</td>' +
+              '<td><button class="btn btn-primary edit-btn" data-id="' + response[i].b_id + '">Edit</button></td>' +
+              '</tr>';
+
+            // Append the row to the table
+            $('#bills-table tbody').append(row);
+          }
+
+          // Attach click event to edit buttons
+          $('.edit-btn').click(editBill);
+
+          // Attach click event to pay buttons
+          $('.pay-btn').click(function () {
+            var billId = $(this).data('id');
+            var billName = $(this).closest('tr').find('td:first-child').text().trim();
+            $('#bill-name').val(billName); // Set the bill name in the input field
+            $('#bill-amount').val(''); // Clear the amount input
+            $('#pay-btn').data('id', billId); // Set the bill ID as a data attribute of the Pay button
+            $('#paymentModal').modal('show'); // Show the payment modal
+          });
+        } else {
+          // If the response is empty, display a message or handle accordingly
+          $('#bills-table tbody').append('<tr><td colspan="7">No bills found.</td></tr>');
+        }
       },
       error: function () {
         showErrorToast('Error fetching bill data.');
@@ -35,6 +77,8 @@ function viewBills() {
     });
   }
 }
+
+
 
 function payBill(billId, amount) {
   var paidAmount = sanitizeInput(amount);
@@ -76,7 +120,9 @@ function payBill(billId, amount) {
       success: function (response) {
         var data = JSON.parse(response);
         $('#bill-name').val(data.bill_name);
+        $('#bill-amount').val(data.bill_paid_amount); // Update the paid amount field in the payment modal
         $('#bill-notes').val(data.bill_notes); // Update the notes field in the payment modal with the retrieved notes
+        $('#paymentModal').modal('show'); // Open the payment modal
       },
       error: function () {
         showErrorToast('Error retrieving bill data.');
@@ -87,7 +133,6 @@ function payBill(billId, amount) {
     $('#bill-amount').val('');
   }
 }
-
 
 // Code for editing bill data and updating in the database
 function editBill() {
@@ -140,77 +185,16 @@ function showErrorToast(message) {
   });
 }
 
-// Trigger the viewBills function when the View button is clicked
-$('#view-btn').click(function () {
-  viewBills();
-});
-
-// Code for fetching and displaying bill data
-function fetchBills() {
-  var month = $('#month').val();
-  var year = $('#year').val();
-
-  fetch('functions.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: 'action=fetchBills&month=' + month + '&year=' + year,
-  })
-    .then(response => response.json()) // Parse the response as JSON
-    .then(data => {
-      // Clear the table body
-      $('#bills-table tbody').empty();
-
-      // Populate the table with the retrieved data
-      for (var i = 0; i < data.length; i++) {
-        var row = '<tr>' +
-          '<td>' + sanitizeInput(data[i].bill_name) + '</td>' +
-          '<td>' +
-          '<div class="d-flex align-items-center">' +
-          '<span class="mr-2">' + sanitizeInput(data[i].bill_paid_amount) + '</span>' +
-          '<div class="input-group-append">' +
-          '<button type="button" class="btn btn-success pay-btn btn-pay" data-id="' + data[i].b_id + '">Pay</button>' +
-            '</div>' +
-          '</div>' +
-          '</td>' +
-          '<td>' + sanitizeInput(data[i].bill_date) + '</td>' +
-          '<td>' + sanitizeInput(data[i].bill_paid_date) + '</td>' +
-          '<td>' + data[i].b_id + '</td>' +
-          '<td>' + sanitizeInput(data[i].bill_notes) + '</td>' +
-          '<td><button class="btn btn-primary edit-btn" data-id="' + data[i].b_id + '">Edit</button></td>' +
-          '</tr>';
-
-        // Append the row to the table
-        $('#bills-table tbody').append(row);
-      }
-
-      // Attach click event to edit buttons
-      $('.edit-btn').click(editBill);
-
-      // Attach click event to pay buttons
-      $('.pay-btn').click(function () {
-        var billId = $(this).data('id');
-        var billName = $(this).closest('tr').find('td:first-child').text().trim();
-        $('#bill-name').val(billName); // Set the bill name in the input field
-        $('#bill-amount').val(''); // Clear the amount input
-        $('#pay-btn').data('id', billId); // Set the bill ID as a data attribute of the Pay button
-        $('#paymentModal').modal('show'); // Show the payment modal
-      });
-
-    })
-    .catch(error => {
-      showErrorToast('Error fetching bill data.');
-    });
-}
-
 $(document).ready(function () {
-  fetchBills();
+  // Trigger the viewBills function when the View button is clicked
+  $('#view-btn').click(function () {
+    viewBills();
+  });
 
   // Listener for the Pay button inside the payment modal
   $('#pay-btn').click(function () {
     var billId = $(this).data('id');
-    var amount = sanitizeInput($('#amount').val());
+    var amount = sanitizeInput($('#bill-amount').val());
 
     // Perform validation on the amount
     if (amount !== '') {
@@ -221,4 +205,10 @@ $(document).ready(function () {
       showErrorToast('Please enter a valid amount.');
     }
   });
+
+  // Trigger the viewBills function on page load
+  viewBills();
+
+  // Attach click event to edit buttons
+  $('.edit-btn').click(editBill);
 });

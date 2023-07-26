@@ -102,7 +102,6 @@ if (isset($_POST['generatereport'])) {
                                 <th>Amount Paid</th>
                                 <th>Due Date</th>
                                 <th>Date Paid</th>
-                                <th>ID</th>
                                 <th>Notes</th>
                                 <th>Actions</th>
                             </tr>
@@ -158,95 +157,7 @@ if (isset($_POST['generatereport'])) {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
   <script src="script.js"></script>
-  <script>
-    $(document).ready(function() {
-      // Set the initial values for month and year
-      $('#month').val('<?php echo $month; ?>');
-      $('#year').val('<?php echo $year; ?>');
 
-      // Fetch bills on page load
-      viewBills();
-
-      // Handle view button click
-      $('#view-btn').click(function() {
-        var month = $('#month').val();
-        var year = $('#year').val();
-
-        // Update URL query parameters
-        var urlParams = new URLSearchParams(window.location.search);
-        urlParams.set('month', month);
-        urlParams.set('year', year);
-        var newUrl = window.location.pathname + '?' + urlParams.toString();
-        history.pushState({}, '', newUrl);
-
-        // Fetch and display bills
-        viewBills();
-      });
-
-      // Click event listener for the Pay button
-      $('#bills-table').on('click', '.pay-btn', function() {
-        var billId = $(this).data('id');
-        var billName = $(this).closest('tr').find('td:first-child').text().trim();
-
-        // Set the bill information in the payment modal
-        $('#bill-name').val(billName);
-        $('#pay-btn').data('id', billId);
-
-        // Open the payment modal
-        $('#paymentModal').modal('show');
-      });
-
-      // Click event listener for the Pay button in the payment modal
-      $('#pay-btn').click(function() {
-        var billId = $(this).data('id');
-        var paidAmount = $('#bill-amount').val();
-
-        // Perform AJAX request to save the payment data
-        $.ajax({
-          url: 'ajax.php', // Replace with the actual path to your PHP file that saves payment data
-          type: 'POST',
-          data: {
-            action: 'payBill', // Add an action parameter to identify the action in the PHP file
-            billId: billId,
-            paidAmount: paidAmount
-          },
-          success: function(response) {
-            // Handle the response from the server
-            if (response === 'success') {
-              // Display success message and refresh the bills table
-              showSuccessToast('Payment successful!');
-              viewBills();
-            } else {
-              // Display error message
-              showErrorToast('Payment failed. Please try again.');
-            }
-          },
-          error: function() {
-            // Display error message
-            showErrorToast('Error occurred. Please try again.');
-          }
-        });
-
-        // Close the payment modal
-        $('#paymentModal').modal('hide');
-      });
-    });
-
-    // Function to fetch and display bills
-    function viewBills() {
-      var month = $('#month').val();
-      var year = $('#year').val();
-
-      $.ajax({
-        url: 'get_bills.php',
-        type: 'POST',
-        data: { month: month, year: year },
-        success: function(response) {
-          $('#bills-table tbody').html(response);
-        }
-      });
-    }
-  </script>
 
 
 </body>
